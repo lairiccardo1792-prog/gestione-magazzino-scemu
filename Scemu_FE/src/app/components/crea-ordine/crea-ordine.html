@@ -49,15 +49,7 @@
                   </div>
                   <div class="col-3">
                     <small style="color: #6c757d;">Q.tà</small>
-                    <input type="number" formControlName="quantita" class="form-control" 
-                           [style.border-color]="riga.get('quantita')?.invalid && riga.get('quantita')?.touched ? '#dc3545' : ''">
-                    
-                    @if (riga.get('quantita')?.errors?.['max']) {
-                      <small class="text-danger" style="font-size: 0.7rem; display: block;">Max 9999!</small>
-                    }
-                    @if (riga.get('quantita')?.errors?.['min']) {
-                      <small class="text-danger" style="font-size: 0.7rem; display: block;">Min 1!</small>
-                    }
+                    <input type="number" formControlName="quantita" class="form-control">
                   </div>
                   <div class="col-2 text-end">
                     <button type="button" (click)="rimuoviProdotto(i)" class="btn btn-outline-danger btn-sm" [disabled]="righe.length === 1">
@@ -77,6 +69,7 @@
           <div style="display: flex; gap: 15px; width: 100%">
             <button type="submit" [disabled]="loading || ordineForm.invalid" class="btn-start" style="flex: 2">
               <span>{{ loading ? 'INVIO IN CORSO...' : 'CONFERMA ORDINE' }}</span>
+              
             </button>
 
             <button type="button" (click)="onReset()" class="btn-reset-blue" style="flex: 1">

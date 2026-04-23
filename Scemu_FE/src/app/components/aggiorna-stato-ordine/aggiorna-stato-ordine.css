@@ -38,7 +38,6 @@
 .btn-start:hover, .btn-reset-blue:hover { transform: scale(1.05); }
 
 
-* Rende la select coerente con lo stile dark/cyber */
 .form-select {
   background-color: rgba(255, 255, 255, 0.05);
   border: 1px solid #444;

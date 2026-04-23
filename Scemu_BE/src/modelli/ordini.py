@@ -31,7 +31,8 @@ class OrdineCreate(BaseModel):
         return v
 
 class OrdineResponse(BaseModel):
-    id:            int    
+    id:            int  
+    utente_id:     int  # 👈 AGGIUNGI QUESTA RIGA  
     cliente_nome:  str
     cliente_email: str
     righe:         list[dict]

@@ -1,90 +1,103 @@
-# src/crud/crud_prodotti.py
+ # src/crud/crud_prodotti.py
 
-from datetime import datetime
-from src.servizi.database import get_connection
-from src.utility.utils import converti_riga, converti_righe
+from datetime       import datetime, timezone
+from sqlalchemy.orm import Session
+from sqlalchemy     import select
 
-def get_tutti_prodotti() -> list:
-    conn = get_connection()
-    cursore = conn.cursor(dictionary=True)
+from src.servizi.modelli import ProdottiDB as pr
+from src.servizi.modelli import OrdiniDB as ord
+from src.servizi.modelli import RigaOrdineDB as rgo
 
-    try:
-        cursore.execute("SELECT * FROM prodotti ORDER BY nome")
-        return converti_righe(cursore.fetchall())
-    finally:
-        cursore.close()
-        conn.close()
 
-def get_prodotto_by_id(prodotto_id: int) -> dict | None:
-    conn = get_connection()
-    cursore = conn.cursor(dictionary=True)
+# Helper (mapper in java)
+def _to_dict(p: pr) -> dict:
+    return {
+        "id":          p.id,
+        "nome":        p.nome,
+        "descrizione": p.descrizione,
+        "prezzo":      p.prezzo,
+        "categoria":   p.categoria,
+        "stock":       p.stock,
+        "attivo":      p.attivo,
+        "creato_il":   p.creato_il.isoformat() if p.creato_il else None,
+        "aggiornato_il": p.aggiornato_il.isoformat() if p.aggiornato_il else None,        
+    }
 
-    try:
-        cursore.execute("SELECT * FROM prodotti WHERE id = %s", (prodotto_id,))
-        row = cursore.fetchall()
+# READ
+def get_tutti_prodotti(db: Session) -> list[dict]:
+    stmt = select(pr).order_by(pr.nome)
+    return [_to_dict(p) for p in db.scalars(stmt).all()]
 
-        return converti_riga(row) if row else None
-    finally:
-        cursore.close()
-        conn.close()
+def get_prodotto_by_id(db: Session, prodotto_id) -> dict | None:
+    p = db.get(pr, prodotto_id)
+    return _to_dict(p) if p else None
 
-def crea_prodotto(dati: dict) -> dict:
-    conn = get_connection()
-    cursore = conn.cursor(dictionary=True)
 
-    try:
-        cursore.execute("INSERT INTO prodotti (nome, descrizione, prezzo, categoria, stock, attivo) "
-                        "VALUES (%s, %s, %s, %s, %s, %s)", (
-                            dati["nome"],
-                            dati.get("descrizione"),
-                            dati["prezzo"],
-                            dati["categoria"] if isinstance(dati["categoria"], str) else dati["categoria"].value,
-                            dati["stock"],
-                            1 if dati["attivo"] else 0
-                        ))
-        conn.commit()
-        cursore.execute("SELECT * FROM prodotti WHERE id = %s", (cursore.lastrowid,))
-        return converti_riga(cursore.fetchone())       
-    finally:
-        cursore.close()
-        conn.close()
+# CREATE
+def crea_prodotto(db: Session, dati: dict) -> dict:
+    categoria=dati["categoria"]
+    if not isinstance(categoria, str):
+        categoria = categoria.value
 
-def aggiorna_prodotto(prodotto_id: int, dati: dict) -> dict | None:
-    conn = get_connection()
-    cursore = conn.cursor(dictionary=True)
+    nuovo = pr(
+        nome        = dati["nome"],
+        descrizione = dati.get("descrizione"),
+        prezzo      = dati["prezzo"],
+        categoria   = categoria,
+        stock       = dati.get("stock", 0),
+        attivo      = dati.get("attivo", 1)
+    )
     
-    # UPDATE prodotti SET <campi> WHERE id = %s"
-    # campo = %s
+    db.add(nuovo)
+    db.flush()
+    db.commit()   # <--- Salva definitivamente le modifiche
 
+    db.refresh(nuovo)
+
+    return _to_dict(nuovo)
+
+# UPDATE
+def aggiorna_prodotto(db: Session, prodotto_id: int, dati: dict) -> dict | None:
+    p = db.get(pr, prodotto_id)
+    if not p:
+        return None
+    
     if not dati:
-        return get_prodotto_by_id(prodotto_id)
+        return _to_dict(p)
+    
+    if "categoria" in dati and not isinstance(dati["categoria"], str):
+        dati["categoria"] = dati["categoria"].value
 
-    try:
-        if "categoria" in dati and not isinstance(dati["categoria"], str):
-            dati["categoria"] = dati["categoria"].value
+    for campo, valore in dati.items():
+        if hasattr(p, campo):
+            setattr(p, campo, valore)
 
-        set_campi = ", ".join(f"{campo} = %s" for campo in dati.keys())
-        valori = list(dati.values()) + [datetime.now(), prodotto_id]
-        cursore.execute("UPDATE prodotti SET {set_campi}, aggiornato_il = %s WHERE  id = %s",
-                        valori)
-        
-        conn.commit()
-        cursore.execute("SELECT * FROM prodotti WHERE id = %s", (prodotto_id,))
-        row = cursore.fetchone()
+    p.aggiornato_il = datetime.now(timezone.utc)
+    db.flush()
+    db.commit()   # <--- Salva definitivamente le modifiche
+    db.refresh(p)
 
-        return converti_riga(row) if row else None 
-    finally:
-        cursore.close()
-        conn.close()
+    return _to_dict(p)
 
-def elimina_prodotto(prodotto_id: int) -> bool:
-    conn = get_connection()
-    cursore = conn.cursor(dictionary=True)
+# DELETE
+def elimina_prodotto(db: Session, prodotto_id: int) -> bool:
+    p = db.get(pr, prodotto_id)
+    if not p:
+        return False
 
-    try:
-        cursore.execute("DELETE FROM prodotti WHERE id = %s", (prodotto_id,))
-        conn.commit()
-        return cursore.rowcount > 0
-    finally:
-        cursore.close()
-        conn.close()
+    db.delete(p)
+    db.commit()   # <--- Salva definitivamente le modifiche
+    db.flush()
+    return True 
+
+########################## AGGIUNTA PER ELIMINAZIONE :
+
+def get_ordini_attivi_per_prodotto(db : Session , prodotti_id : int )-> dict | None:
+    stmt = (select(ord).join(rgo).where(rgo.prodotti_id == prodotti_id,
+    ord.stato.notin_(["consegnato", "annullato"])))
+    risultato = db.scalars(stmt).first()
+    if not risultato : return None 
+    return risultato
+
+
+    

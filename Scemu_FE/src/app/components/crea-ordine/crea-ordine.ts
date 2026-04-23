@@ -42,7 +42,7 @@ export class CreaOrdineComponent implements OnInit {
   creaRiga(): FormGroup {
     return this.fb.group({
       prodotto_id: [null, [Validators.required, Validators.min(1)]],
-      quantita: [1, [Validators.required, Validators.min(1),Validators.max(9999)]]
+      quantita: [1, [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -84,24 +84,11 @@ export class CreaOrdineComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: (err) => {
-  this.loading = false;
-  this.errore = true;
-  
-  console.error("Dettaglio tecnico errore:", err);
-
-  // LOGICA PER ESTRARRE IL TESTO
-  if (err.error && typeof err.error.message === 'string') {
-    this.messaggio = err.error.message;
-  } else if (err.error && typeof err.error.detail === 'string') {
-    this.messaggio = err.error.detail;
-  } else if (typeof err.error === 'string') {
-    this.messaggio = err.error;
-  } else {
-    this.messaggio = "Errore: quantità non disponibile o dati non validi.";
-  }
-
-  this.cdr.detectChanges();
-}
+        this.loading = false;
+        this.errore = true;
+        this.messaggio = err.error?.detail || "Errore durante la creazione dell'ordine";
+        this.cdr.detectChanges();
+      }
     });
   }
 }

@@ -1,98 +1,87 @@
-# src/crud/crud_ordini.py
+from datetime       import datetime, timezone
+from sqlalchemy.orm import Session
+from sqlalchemy     import select
 
-from datetime import datetime
-from src.servizi.database import get_connection
-from src.utility.utils import converti_riga, converti_righe
+from src.servizi.modelli import OrdiniDB as ord
+from src.servizi.modelli import RigaOrdineDB as rod
 
-def get_tutti_ordini() -> list:
-    conn = get_connection()
-    cursore = conn.cursor(dictionary=True)
+# HELPER
+def _riga_to_dict(r: rod) -> dict:
+    return {
+        "id":              r.id,
+        "prodotto_id":     r.prodotti_id,
+        "nome_prodotto":   r.nome_prodotto,
+        "prezzo_unitario": r.prezzo_unitario,
+        "quantita":        r.quantita,
+        "subtotale":       r.subtotale
+    }
 
-    try:
-        cursore.execute("SELECT * FROM ordini ORDER BY id")
-        ordini = cursore.fetchall()
-        
-        return [_add_righe(o, cursore) for o in ordini]
-    finally:
-        cursore.close()
-        conn.close()
+def _to_dict(o: ord) -> dict:
+    return {
+        "id":            o.id,
+        "utente_id":     o.utente_id,  # <--- AGGIUNTO: utile per i controlli di sicurezza
+        "cliente_nome":  o.cliente_nome,
+        "cliente_email": o.cliente_email,
+        "totale":        o.totale,
+        "stato":         o.stato,
+        "note":          o.note,
+        "righe":         [_riga_to_dict(r) for r in o.righe],
+        "creato_il":     o.creato_il.isoformat() if o.creato_il else None,
+        "aggiornato_il": o.aggiornato_il.isoformat() if o.aggiornato_il else None,
+    }
 
-def get_ordine_by_id(ordine_id: int) -> dict | None:
-    conn = get_connection()
-    cursore = conn.cursor(dictionary=True)
+# READ
+def get_tutti_ordini(db: Session) -> list[dict]:
+    stmt = select(ord).order_by(ord.creato_il)
+    return [_to_dict(o) for o in db.scalars(stmt).all()]
 
-    try:
-        cursore.execute("SELECT * FROM ordini WHERE id = %s", (ordine_id, ))
-        ordine = cursore.fetchone()
-        
-        if not ordine:
-            return None
-        return _add_righe(ordine, cursore)
-    finally:
-        cursore.close()
-        conn.close()    
+# NUOVA FUNZIONE: Questa è quella che usa la rotta per filtrare
+def get_ordini_per_utente(db: Session, utente_id: int) -> list[dict]:
+    """Recupera solo gli ordini appartenenti a un determinato utente"""
+    stmt = select(ord).where(ord.utente_id == utente_id).order_by(ord.creato_il.desc())
+    return [_to_dict(o) for o in db.scalars(stmt).all()]
 
-def crea_ordine(dati: dict) -> dict:
-    conn = get_connection()
-    cursore = conn.cursor(dictionary=True)
+def get_ordine_by_id(db: Session, ordine_id: int) -> dict | None:
+    o = db.get(ord, ordine_id)
+    return _to_dict(o) if o else None
 
-    try:
-        cursore.execute("INSERT INTO ordini (cliente_nome, cliente_email, totale, stato, note) "
-                        "VALUES (%s, %s, %s, %s, %s)",
-                        (dati["cliente_nome"],
-                         dati["cliente_email"],
-                         dati["totale"],
-                         dati["stato"],
-                         dati.get("note")))
-        ordine_id = cursore.lastrowid
+# CREATE
+def crea_ordine(db: Session, dati: dict) -> dict:
+    nuovo_ordine = ord(
+        utente_id     = dati["utente_id"],  # <--- AGGIUNTO: salviamo chi ha fatto l'ordine
+        cliente_nome  = dati["cliente_nome"],
+        cliente_email = dati["cliente_email"],
+        totale        = dati["totale"],
+        stato         = dati["stato"],
+        note          = dati.get("note"),
+    )
+    db.add(nuovo_ordine)
+    db.flush() # Otteniamo l'ID dell'ordine appena creato
 
-        for riga in dati["righe"]:
-            cursore.execute("INSERT INTO righe_ordine (ordine_id, prodotto_id, prezzo_unitario, quantita, subtotale) "
-                            "VALUES (%s, %s, %s, %s, %s)",
-                            (ordine_id,
-                             riga["prodotto_id"],
-                             riga["nome_prodotto"],
-                             riga["prezzo_unitario"],
-                             riga["quantita"],
-                             riga["subtotale"]))
-        conn.commit()    
-        
-        cursore.execute("SELECT * FROM ordini WHERE id = %s", (ordine_id, ))
-        ordine = cursore.fetchone()
-        
-        return _add_righe(ordine, cursore)
-    except:
-        conn.rollback()
-        raise
-    finally:
-        cursore.close()
-        conn.close()    
+    for riga in dati["righe"]:
+        db.add(rod(
+            ordini_id       = nuovo_ordine.id,
+            prodotti_id     = riga["prodotto_id"],
+            nome_prodotto   = riga["nome_prodotto"],
+            prezzo_unitario = riga["prezzo_unitario"],
+            quantita        = riga["quantita"],
+            subtotale       = riga["subtotale"]   
+        ))
 
-def aggiorna_stato_ordine(ordine_id: int, nuovo_stato: str) -> dict | None:
-    conn = get_connection()
-    cursore = conn.cursor(dictionary=True)
+    db.commit()   # Salva tutto: ordine e righe
+    db.refresh(nuovo_ordine)
 
-    try:
-        cursore.execute("UPDATE ordini SET stato = %s, aggiornato_il = %s WHERE id = %s",
-                        (nuovo_stato, datetime.now(), ordine_id))
-        conn.commit()
+    return _to_dict(nuovo_ordine)
 
-        cursore.execute("SELECT * FROM ordini WHERE id = %s", (ordine_id, ))
-        ordine = cursore.fetchone()
-        
-        if not ordine:
-            return None
-        return _add_righe(ordine, cursore)
-    finally:
-        cursore.close()
-        conn.close()    
-
-# --- HELPER INTERNO -------------------------------------
-def _add_righe(ordine: dict, cursor) -> dict:
-    cursor.execute(
-        "SELECT * FROM righe_ordine WHERE ordine_id = %s ORDER BY id", (ordine["id"], ))
+# UPDATE STATO
+def aggiorna_stato_ordine(db: Session, ordine_id: int, nuovo_stato: str) -> dict | None:
+    o = db.get(ord, ordine_id)
+    if not o:
+        return None
     
-    righe  = cursor.fetchall()
-    ordine = dict(ordine)
-    ordine["righe"] = converti_righe(righe)
-    return converti_riga(ordine)
+    o.stato         = nuovo_stato
+    o.aggiornato_il = datetime.now(timezone.utc)
+    db.commit()
+    db.refresh(o)
+
+    return _to_dict(o)
