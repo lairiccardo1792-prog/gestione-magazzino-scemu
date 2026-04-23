@@ -1,0 +1,263 @@
+/* Layout principale */
+.landing-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.header-container {
+  width: 100%;
+  padding: 20px 40px;
+  position: relative;
+  z-index: 10;
+}
+
+.header-line {
+  border-bottom: 2px solid var(--primary-purple);
+  padding-bottom: 10px;
+  width: 100%;
+}
+
+.logo-text {
+  color: var(--primary-purple);
+  margin: 0;
+  font-size: 2.5rem;
+  letter-spacing: -1px;
+  font-weight: 800;
+}
+
+.sub-text {
+  font-weight: 300;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  margin-left: 10px;
+}
+
+.landing-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 5;
+}
+
+/* Card */
+.login-card {
+  background: var(--bg-card);
+  backdrop-filter: var(--blur-effect);
+  border: var(--glass-border);
+  border-radius: 20px;
+  padding: 40px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.title-cyber { color: white; font-family: 'Syne', sans-serif; }
+.subtitle-cyber { color: var(--text-muted); }
+.label-cyber { color: var(--text-muted); display: block; margin-bottom: 8px; }
+
+/* Bottoni */
+.button-group {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+  width: 100%;
+}
+
+.status-zone {
+  min-height: 60px;
+  margin-top: 20px;
+}
+
+.error-alert {
+text-align: center;
+  padding: 1rem;
+  border-radius: 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid #ef4444;
+  color: #ef4444;
+  font-size: 0.9rem;
+}
+
+.query-text {
+  color: var(--primary-purple);
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+/* Risultati Tabella */
+.result-container {
+  width: 100%;
+  max-width: 800px;
+  margin-top: 2rem;
+  padding-bottom: 3rem;
+}
+
+.id-cell { color: var(--primary-purple); font-weight: bold; }
+.name-cell { color: white; text-transform: uppercase; }
+.price-cell { color: #00d4ff; font-weight: 800; }
+
+.stock-badge {
+  background: rgba(0, 212, 255, 0.1);
+  color: #00d4ff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+}
+
+.stock-badge.low-stock {
+  background: rgba(241, 196, 15, 0.1);
+  color: #f1c40f;
+}
+
+/* Back Button Fixed */
+.btn-back-fixed {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  z-index: 30;
+  text-decoration: none;
+  background: transparent;
+  border: 1px solid #00d4ff;
+  color: #00d4ff;
+  padding: 10px 25px;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+  font-family: 'Syne', sans-serif;
+  font-weight: bold;
+}
+
+.btn-back-fixed:hover {
+  background: rgba(0, 212, 255, 0.1);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+  transform: translateY(-3px);
+}
+
+/* Animazioni */
+/* Animazioni - CORRETTO */
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+
+/* BACKGROUD SFONDO  ********************/
+/* BLOB DI SFONDO (Effetto Neon) */
+.blob {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  filter: blur(80px);
+  opacity: 0.15;
+  z-index: 0;
+  border-radius: 50%;
+}
+
+.blob-purple { background: var(--primary-purple); top: -100px; left: -100px; }
+.blob-indigo { background: var(--primary-indigo); bottom: -100px; right: -100px; }
+
+.back-link {
+  position: relative !important; /* Fondamentale per far funzionare lo z-index */
+  z-index: 100 !important;       /* Lo porta sopra i blob */
+  cursor: pointer !important;    /* Assicurati che compaia la manina */
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.btn-start, .btn-reset-blue {
+  border: none;
+  padding: 15px 30px;
+  border-radius: 50px; /* Arrotondamento completo */
+  color: white;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+}
+
+/* Gradiente Viola/Indaco per CERCA */
+.btn-start {
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  box-shadow: 0 8px 20px rgba(168, 85, 247, 0.4);
+}
+
+/* Gradiente Azzurro/Blu per RESET */
+.btn-reset-blue {
+  background: linear-gradient(135deg, #0dcaf0, #007bff);
+  box-shadow: 0 8px 20px rgba(13, 202, 240, 0.4);
+}
+
+.btn-start:hover, .btn-reset-blue:hover {
+  transform: translateY(-3px) scale(1.02);
+  filter: brightness(1.1);
+}
+
+.btn-start:active, .btn-reset-blue:active {
+  transform: translateY(0);
+}
+
+/* TABELLA RISULTATI */
+.result-container {
+  width: 100%;
+  max-width: 700px;
+  margin-top: 30px;
+}
+
+.table-container {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+}
+
+.cyber-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: white;
+}
+
+.cyber-table th {
+  background: rgba(111, 66, 193, 0.2);
+  padding: 15px;
+  text-align: left;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.cyber-table td {
+  padding: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.price-cell { color: #00d4ff; font-weight: 800; }
+.stock-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: rgba(0, 212, 255, 0.1);
+  color: #00d4ff;
+  font-weight: bold;
+}

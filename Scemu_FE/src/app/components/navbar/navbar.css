@@ -1,0 +1,162 @@
+/* --- NAVBAR CONTAINER --- */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px; /* Padding generoso ai lati */
+  
+  /* Sfondo trasparente per far vedere i blob viola */
+  background-color: transparent !important;
+  background-image: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, transparent 100%) !important;
+  
+  box-shadow: none !important;
+  border: none !important;
+
+  /* Posizionamento flottante sopra lo sfondo */
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+/* --- NAV LINKS (Area Centrale/Sinistra) --- */
+.nav-links {
+  display: flex;
+  gap: 35px; /* Spazio generoso tra Ordini, Prodotti e Statistiche */
+  align-items: center;
+  flex-wrap: wrap;
+  
+  /* Spinge tutto quello che viene dopo (il Logout) verso destra */
+  margin-right: auto; 
+  margin-left: 60px; /* Distanza dal logo SCEMU */
+}
+
+.nav-links a,
+.nav-link-simple {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+  text-decoration: none;
+  font-size: 15px;
+  font-family: "Syne", sans-serif;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+.nav-links a:hover,
+.nav-link-simple:hover {
+  color: #a78bfa; /* Viola chiaro al passaggio del mouse */
+  transform: translateY(-1px);
+}
+
+/* --- RIGHT AREA (User & Logout) --- */
+.right {
+  display: flex;
+  align-items: center;
+  gap: 25px; /* Distanza tra il nome "riccardo" e il tasto Logout */
+}
+
+.username {
+  font-weight: 600;
+  color: white;
+  text-transform: capitalize;
+  font-family: "Syne", sans-serif;
+  letter-spacing: 0.5px;
+}
+
+/* --- LOGOUT BUTTON (Il tuo stile originale) --- */
+.btn-primary-custom {
+  background: linear-gradient(90deg, #6366f1, #8b5cf6); /* Il tuo accent-gradient */
+  padding: 10px 22px;
+  border-radius: 50px;
+  border: none;
+  color: white;
+  font-family: "Syne", sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-primary-custom:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 30px rgba(139, 92, 246, 0.5);
+}
+
+/* --- DROPDOWN & ALTRI ELEMENTI --- */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropbtn {
+  background: transparent;
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 6px 10px;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.dropbtn:hover {
+  color: #a78bfa;
+}
+
+.dropdown-content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 220px;
+  background-color: #0f0f1a;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-10px);
+  pointer-events: none;
+  transition: all 0.2s ease;
+  z-index: 999;
+}
+
+.dropdown-content.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.dropdown-content a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  color: white;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.dropdown-content a:hover {
+  background-color: #1c1c2e;
+  color: #a78bfa;
+}
+
+/* --- AREA UTENTE (Nome in azzurro) --- */
+.username {
+  font-weight: 600;
+  color: #00d4ff !important; /* Questo è l'azzurro neon che usi nei tasti */
+  text-transform: capitalize;
+  font-family: "Syne", sans-serif;
+  letter-spacing: 0.5px;
+  /* Opzionale: aggiungi un leggero bagliore azzurro */
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.4); 
+}

@@ -1,0 +1,91 @@
+.blob {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  filter: blur(80px);
+  opacity: 0.15;
+  z-index: 0;
+  border-radius: 50%;
+}
+.blob-purple { background: #6f42c1; top: -100px; left: -100px; }
+.blob-indigo { background: #4e00ff; bottom: -100px; right: -100px; }
+
+/* BOTTONI AFFIANCATI */
+.btn-start, .btn-reset-blue {
+  border: none;
+  padding: 15px;
+  border-radius: 50px;
+  color: white;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-start {
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+}
+
+.btn-reset-blue {
+  background: linear-gradient(135deg, #0dcaf0, #007bff);
+  box-shadow: 0 10px 20px rgba(13, 202, 240, 0.3);
+}
+
+.btn-start:hover, .btn-reset-blue:hover { transform: scale(1.05); }
+
+
+* Rende la select coerente con lo stile dark/cyber */
+.form-select {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid #444;
+  color: white;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.form-select:focus {
+  background-color: #1a1a1a;
+  color: white;
+  border-color: #6f42c1;
+  box-shadow: 0 0 0 0.25rem rgba(111, 66, 193, 0.25);
+}
+
+/* Animazione per l'icona di caricamento */
+.spin {
+  display: inline-block;
+  animation: rotate 1s linear infinite;
+  margin-left: 8px;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+.login-card {
+  max-width: 450px !important; /* Forza la larghezza */
+  width: 100% !important;
+  margin: 0 auto !important;   /* Centra la card */
+  display: block !important;
+}
+
+.landing-content {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 40px 20px !important;
+}

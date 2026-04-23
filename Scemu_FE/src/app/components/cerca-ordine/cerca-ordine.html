@@ -1,0 +1,106 @@
+<div class="landing-wrapper" style="display: flex; flex-direction: column; min-height: 100vh; width: 100%; position: relative; overflow-x: hidden;">
+  
+  <div class="blob blob-purple"></div>
+  <div class="blob blob-indigo"></div>
+
+  <div style="width: 100%; padding: 20px 40px; position: relative; z-index: 10;">
+    <div style="border-bottom: 2px solid #6f42c1; padding-bottom: 10px; width: 100%;">
+      <h1 style="color: #6f42c1; margin: 0; font-size: 2.5rem; letter-spacing: -1px; font-weight: 800;">
+        SCEMU <span style="font-weight: 300; font-size: 1.2rem; color: #6c757d; margin-left: 10px">TelevideoCom.Co</span>
+      </h1>
+    </div>
+  </div>
+
+  <div class="landing-content" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; z-index: 5;">
+    
+    <div class="login-card shadow-lg" style="width: 100%; max-width: 480px; margin: 0 auto;">
+      <div class="text-center mb-4">
+        <h1 style="color: white; font-family: 'Syne', sans-serif">Cerca Ordine</h1>
+        <p style="color: #6c757d">Inserisci l'ID numerico per i dettagli</p>
+      </div>
+
+      <form [formGroup]="searchForm" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="mb-4">
+          <label style="color: #6c757d; display: block; margin-bottom: 8px">ID Ordine</label>
+          <input
+            type="number"
+            formControlName="idOrdine"
+            min="1"
+            class="form-control"
+            [class.is-invalid]="f['idOrdine'].invalid && f['idOrdine'].touched"
+            placeholder="Es: 101"
+          />
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-top: 25px; width: 100%">
+          <button type="submit" [disabled]="loading" class="btn-start" style="flex: 2">
+            <span>{{ loading ? 'RICERCA...' : 'CERCA' }}</span>
+            <i class="bi" [ngClass]="loading ? 'bi-arrow-repeat spin ms-2' : 'bi-search ms-2'"></i>
+          </button>
+
+          <button type="button" (click)="onReset()" class="btn-reset-blue" style="flex: 1">
+            <span>RESET</span>
+          </button>
+        </div>
+      </form>
+
+      <div style="min-height: 60px; margin-top: 20px;">
+        
+        @if (errore && messaggioErrore) {
+          <div class="text-center p-3 rounded animate-fade-in" 
+               style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; font-size: 0.9rem;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            {{ messaggioErrore }}
+          </div>
+        }
+
+        @if (loading) {
+          <div class="text-center mt-3 animate-pulse">
+            <small style="color: #6f42c1; letter-spacing: 1px; font-weight: bold;">INTERROGAZIONE DATABASE...</small>
+          </div>
+        }
+      </div>
+    </div>
+
+    @if (ordineTrovato && !loading) {
+      <div class="container mt-4 pb-5" style="width: 100%; max-width: 900px; animation: slideUp 0.4s ease-out;">
+        <div class="table-container shadow-lg">
+          <table class="cyber-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>CLIENTE</th>
+                <th>TOTALE</th> 
+                <th>STATO</th>
+                <th>AGGIORNATO</th> 
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color: #6f42c1; font-weight: bold;">#{{ ordineTrovato.id }}</td>
+                <td>{{ ordineTrovato.cliente_email }}</td>
+                <td style="color: #2ecc71; font-weight: 800;">
+                  {{ ordineTrovato.totale | currency:'EUR':'symbol':'1.2-2' }}
+                </td>
+                <td>
+                  <span class="status-badge" [ngClass]="ordineTrovato.stato.toLowerCase()">
+                    {{ ordineTrovato.stato.replace('_', ' ') }}
+                  </span>
+                </td>
+                <td style="font-size: 0.85rem; color: #6c757d;">
+                  {{ (ordineTrovato.aggiornato_il || ordineTrovato.creato_il) | date:'dd/MM/yyyy HH:mm' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+
+  <a [routerLink]="['/ordini']" class="btn btn-outline-info rounded-pill px-4 shadow-sm"
+     style="position: fixed; bottom: 40px; right: 40px; z-index: 30;">
+    <i class="bi bi-house-door me-2"></i> TORNA ALLA DASHBOARD
+  </a>
+
+</div>

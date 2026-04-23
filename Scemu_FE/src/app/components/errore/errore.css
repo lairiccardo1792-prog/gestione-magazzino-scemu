@@ -1,0 +1,81 @@
+/* Importa i font necessari */
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+.login-wrapper {
+  min-height: 100vh;
+  background: #09090f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(99,102,241,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99,102,241,0.06) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.bg-glow {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99,102,241,0.13) 0%, transparent 70%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -55%);
+  pointer-events: none;
+}
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  padding: 40px 44px 44px;
+  width: 100%;
+  max-width: 420px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  text-align: center;
+}
+
+.card-header-custom h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 3rem; /* Più grande per l'errore */
+  font-weight: 800;
+  color: #f0f0ff;
+  margin: 10px 0;
+}
+
+/* Stile del bottone che volevi (tipo Reset Blue) */
+.btn-login {
+  height: 48px;
+  width: 100%;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  border: none;
+  box-shadow: 0 4px 20px rgba(99,102,241,0.35);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 28px rgba(99,102,241,0.5);
+}

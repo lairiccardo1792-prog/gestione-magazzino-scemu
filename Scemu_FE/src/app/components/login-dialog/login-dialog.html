@@ -1,0 +1,35 @@
+<div class="modal fade show d-block" *ngIf="show">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content dialog-card">
+
+      <div class="modal-body text-center py-4">
+        <div class="dialog-icon mb-3"
+             [class.icon-success]="success"
+             [class.icon-error]="!success">
+
+          <i (click)="close()"
+            class="bi"
+             [class.bi-check]="success"
+             [class.bi-x]="!success"></i>
+
+        </div>
+
+        <h5>
+          {{ success ? 'Accesso effettuato' : 'Accesso negato' }}
+        </h5>
+
+        <p>{{ message }}</p>
+      </div>
+
+      <div class="modal-footer justify-content-center">
+        <button class="btn"
+                (click)="close()">
+          Chiudi
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop fade show" *ngIf="show"></div>

@@ -1,0 +1,110 @@
+<div class="landing-wrapper">
+  <div class="blob blob-purple"></div>
+  <div class="blob blob-indigo"></div>
+
+  <div style="width: 100%; position: relative; z-index: 50; padding: 20px 0 0 0;">
+    <div style="margin-bottom: 30px; border-bottom: 2px solid #6f42c1; padding: 0 40px 8px 40px; width: 100%;">
+      <h1 style="color: #6f42c1; margin: 0; font-size: 2.5rem; letter-spacing: -1px; font-weight: 800;">
+        SCEMU <span style="font-weight: 300; font-size: 1.2rem; color: #6c757d; margin-left: 10px;">TelevideoCom.Co</span>
+      </h1>
+    </div>
+  </div>
+
+  <div class="landing-content" style="display: flex; justify-content: center; align-items: flex-start; width: 100%; flex-grow: 1; padding: 40px 20px; position: relative; z-index: 60;">
+    
+    @if (ordineForm) {
+      <div class="login-card shadow-lg" style="max-width: 600px; width: 100%;">
+        <div class="text-center mb-4">
+          <h1 style="color: white; font-family: 'Syne', sans-serif">Nuovo Ordine</h1>
+          <p style="color: #6c757d">Compila i dati per registrare l'acquisto</p>
+        </div>
+
+        <form [formGroup]="ordineForm" (ngSubmit)="onSubmit()" autocomplete="off">
+          
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label class="form-label-custom">Nome Cliente</label>
+              <input type="text" formControlName="cliente_nome" class="form-control" placeholder="Mario Rossi">
+            </div>
+            <div class="col-md-6 mb-3">
+              <label class="form-label-custom">Email</label>
+              <input type="email" formControlName="cliente_email" class="form-control" placeholder="mario@esempio.it">
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <label class="form-label-custom" style="margin: 0;">Lista Prodotti</label>
+              <button type="button" (click)="aggiungiProdotto()" class="btn btn-sm btn-outline-primary rounded-pill">
+                <i class="bi bi-plus-lg me-1"></i> Aggiungi
+              </button>
+            </div>
+
+            <div formArrayName="righe">
+              @for (riga of righe.controls; track riga; let i = $index) {
+                <div [formGroupName]="i" class="row g-2 mb-2 animate-fade-in align-items-end">
+                  <div class="col-7">
+                    <small style="color: #6c757d;">ID Prodotto</small>
+                    <input type="number" formControlName="prodotto_id" class="form-control" placeholder="ID">
+                  </div>
+                  <div class="col-3">
+                    <small style="color: #6c757d;">Q.tà</small>
+                    <input type="number" formControlName="quantita" class="form-control" 
+                           [style.border-color]="riga.get('quantita')?.invalid && riga.get('quantita')?.touched ? '#dc3545' : ''">
+                    
+                    @if (riga.get('quantita')?.errors?.['max']) {
+                      <small class="text-danger" style="font-size: 0.7rem; display: block;">Max 9999!</small>
+                    }
+                    @if (riga.get('quantita')?.errors?.['min']) {
+                      <small class="text-danger" style="font-size: 0.7rem; display: block;">Min 1!</small>
+                    }
+                  </div>
+                  <div class="col-2 text-end">
+                    <button type="button" (click)="rimuoviProdotto(i)" class="btn btn-outline-danger btn-sm" [disabled]="righe.length === 1">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label-custom">Note Ordine</label>
+            <textarea formControlName="note" class="form-control" rows="2" placeholder="Note facoltative..."></textarea>
+          </div>
+
+          <div style="display: flex; gap: 15px; width: 100%">
+            <button type="submit" [disabled]="loading || ordineForm.invalid" class="btn-start" style="flex: 2">
+              <span>{{ loading ? 'INVIO IN CORSO...' : 'CONFERMA ORDINE' }}</span>
+            </button>
+
+            <button type="button" (click)="onReset()" class="btn-reset-blue" style="flex: 1">
+              <span>RESET</span>
+            </button>
+          </div>
+        </form>
+
+        <div style="min-height: 80px; margin-top: 25px;">
+          @if (successo) {
+            <div class="alert-custom-success animate-fade-in">
+              <i class="bi bi-check-circle-fill me-2"></i> {{ messaggio }}
+            </div>
+          }
+          @if (errore) {
+            <div class="alert-custom-error animate-fade-in">
+              <i class="bi bi-exclamation-octagon-fill me-2"></i> {{ messaggio }}
+            </div>
+          }
+        </div>
+      </div>
+    }
+
+  </div>
+
+<a [routerLink]="['/ordini']" 
+   class="btn btn-outline-info rounded-pill px-4 shadow-sm"
+   style="position: absolute; bottom: 40px; right: 5%; z-index: 9999">
+   <i class="bi bi-house-door me-2"></i> TORNA ALLA DASHBOARD
+</a>
+</div>

@@ -1,0 +1,144 @@
+<div class="landing-wrapper">
+  <!-- COLORAZIONE SFONDO -->
+  <div class="blob blob-purple"></div>
+  <div class="blob blob-indigo"></div>
+  <!-- FINE COLORAZIONE SFONDO -->
+
+  <!-- SCRITTA SOPRA -->
+  <div style="padding: 20px; position: relative; z-index: 10">
+    <div style="margin-bottom: 30px; border-bottom: 2px solid #6f42c1; padding-bottom: 8px">
+      <h1
+        style="color: #6f42c1; margin: 0; font-size: 2.5rem; letter-spacing: -1px; font-weight: 800"
+      >
+        SCEMU
+        <span style="font-weight: 300; font-size: 1.2rem; color: #6c757d; margin-left: 10px"
+          >TelevideoCom.Co</span
+        >
+      </h1>
+    </div>
+  </div>
+  <!-- FINE SCRITTA SOPRA -->
+
+  <!-- INIZIO CARD -->
+
+  <div class="landing-content">
+    <div class="login-card">
+      <!-- SCRITTE  DENTRO CARD -->
+      <div class="text-center mb-4">
+        <h1 style="color: white; font-family: 'Syne', sans-serif">Accedi</h1>
+        <p style="color: var(--text-muted)">Inserisci le tue credenziali</p>
+      </div>
+      <!-- FINE SCRITTE DENTRO CARD -->
+
+      <!-- INIZIO FORM  -->
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" autocomplete="off">
+        <div class="mb-4">
+          <label style="color: var(--text-muted); display: block; margin-bottom: 8px"
+            >Username</label
+          >
+          <input
+            type="text"
+            formControlName="user"
+            class="form-control"
+            [class.is-invalid]="f['user'].invalid && f['user'].touched"
+            placeholder="Username"
+          />
+          <!-- LOGICA IN ANGULAR TS PER MOSTRARE I MESSAGGI SOTTO IL QUADRO INSERIMENTO -->
+
+          @if (f['user'].touched) {
+            @if (f['user'].errors?.['required']) {
+              <div class="text-danger">Campo obbligatorio</div>
+            } @else if (f['user'].errors?.['minlength']) {
+              <div class="text-danger">Troppo corto (min 3 caratteri)</div>
+            } @else if (f['user'].valid) {
+              <div style="color: #2ecc71; font-size: 0.8rem; margin-top: 5px">Username valido!</div>
+            }
+          }
+          <!-- fine LOGICA IN ANGULAR TS PER MOSTRARE I MESSAGGI SOTTO IL QUADRO INSERIMENTO -->
+        </div>
+
+        <!-- BLOCCO DELLA PASSWORD  -->
+
+        <div class="mb-4">
+          <label style="color: var(--text-muted); display: block; margin-bottom: 8px"
+            >Password</label
+          >
+          <div style="position: relative">
+            <input
+              [type]="hidePassword ? 'password' : 'text'"
+              formControlName="password"
+              class="form-control"
+              [class.is-invalid]="f['password'].invalid && f['password'].touched"
+              placeholder="••••••••"
+            />
+            <i
+              class="bi"
+              [ngClass]="hidePassword ? 'bi-eye-slash' : 'bi-eye'"
+              (click)="hidePassword = !hidePassword"
+              style="position: absolute; right: 15px; top: 12px; cursor: pointer; color: #6c757d"
+            >
+            </i>
+          </div>
+
+          @if (f['password'].errors?.['required'] && f['password'].touched) {
+            <div class="text-danger">La password è obbligatoria</div>
+          } @else if (f['password'].errors?.['minlength']) {
+            <div class="text-danger">Troppo corto (min 4 caratteri)</div>
+          }
+        </div>
+
+        <!-- FINE  BLOCCO DELLA PASSWORD  -->
+
+        <!-- TASTO DI SUBMIT E RESET -->
+        <div style="display: flex; gap: 15px; margin-top: 25px; width: 100%">
+          <button type="submit" [disabled]="loading" class="btn-start" style="flex: 1">
+            <span>{{ loading ? '...' : 'ACCEDI' }}</span>
+            @if (!loading) {
+              <i class="bi bi-chevron-right ms-2"></i>
+            }
+          </button>
+
+          <button type="button" (click)="onReset()" class="btn-reset-blue" style="flex: 1">
+            <span>RESET</span>
+            <i class="bi bi-arrow-counterclockwise ms-2"></i>
+          </button>
+        </div>
+        <!-- FINE  TASTO DI SUBMIT  E RESET -->
+      </form>
+
+      <!-- FINE FORM  -->
+  <!-- INIZIO FINESTRA DI DIALOGO MODAL -->
+
+
+  <!-- DIALOG -->
+  <app-login-dialog
+    [show]="showDialog"
+    [success]="dialogSuccess"
+    [message]="dialogMessage"
+    (closed)="onDialogClosed()"
+  >
+  </app-login-dialog>
+      <!-- LINK ALLA HOME -->
+    </div>
+  </div>
+
+
+  <a
+    [routerLink]="['/home']"
+    class="btn btn-outline-info rounded-pill px-4 shadow-sm"
+    style="
+      position: absolute;
+      bottom: 40px;
+      right: 5%; /* Usiamo il 5% per essere identici al margin-right che avevi nell'altro */
+      z-index: 20;
+      display: inline-block;
+    "
+  >
+    <i class="bi bi-house-door me-2"></i> HOME
+  </a>
+</div>
+
+<!-- FINE  LINK ALLA HOME -->
+
+<!-- FINE CARD -->

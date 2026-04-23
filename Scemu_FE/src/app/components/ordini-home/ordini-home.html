@@ -1,0 +1,105 @@
+<div style="padding: 20px;">
+
+    <!-- COLORAZIONE SFONDO -->
+  <div class="blob blob-purple"></div>
+  <div class="blob blob-indigo"></div>
+
+<!-- INTESTAZIONE -->
+  <div style="margin-bottom: 30px; border-bottom: 2px solid #6f42c1; pb-2">
+    <h1 style="color: #6f42c1; margin: 0; font-size: 2.5rem; letter-spacing: -1px; font-weight: 800;">
+      SCEMU <span style="font-weight: 300; font-size: 1.2rem; color: #6c757d; margin-left: 10px;">TelevideoCom.Co</span>
+    </h1>
+    </div>
+<!-- FINE INTESTAZIONE -->
+
+<!-- TITOLO ORDINI -->
+<div style="text-align: center; margin-bottom: 40px; margin-top: 20px;">
+    <h2 style="font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 600; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;">
+      Gestione Ordini
+    </h2>
+    <div style="width: 50px; height: 3px; background: var(--accent-gradient); margin: 0 auto; border-radius: 10px;"></div>
+<!-- FINE TITOLO ORDINI -->
+<!-- BOTTONI -->
+
+<div class="actions-bar">
+  <div class="action-item">
+    <span>Cerca un ordine</span>
+    <button class="btn-plus" routerLink="/cerca-ordine">
+      <i class="bi bi-search"></i> </button>
+  </div>
+
+  <div class="action-item">
+    <span>Aggiornare lo stato</span>
+    <button class="btn-plus" routerLink="/aggiorna-stato-ordine">
+      <i class="bi bi-arrow-counterclockwise"></i>
+    </button>
+  </div>
+
+  <div class="action-item">
+    <span>Nuovo ordine</span>
+    <button class="btn-plus" routerLink="/crea-ordine">
+      <i class="bi bi-plus-lg"></i>
+    </button>
+  </div>
+</div>
+
+<!-- BOTTONI -->
+
+
+<!-- LISTA ORDINI -->
+  
+<div class="lista-ordini-container">
+  <i class="bi bi-card-list"></i>
+  <h2 class="titolo-lista">Lista Ordini <span>({{ totaleOrdini }})</span></h2>
+</div>
+
+  <div *ngIf="loading" style="padding: 10px; color: #007bff; font-weight: bold;">
+    🔄 Caricamento in corso... attendere...
+  </div>
+
+  <!-- TABELLA -->
+  
+  <div class="table-container ">
+  <table class="cyber-table" *ngIf="!loading && listaOrdini.length > 0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Cliente</th>
+        <th>Email</th>
+        <th style="text-align: center;">Stato</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ordine of listaOrdini">
+        <td>{{ ordine.id }}</td>
+        <td>{{ ordine.cliente_nome }}</td>
+        <td>{{ ordine.cliente_email }}</td>
+        <td style="text-align: center;">
+          <span class="status-badge" [ngClass]="ordine.stato">
+            {{ ordine.stato }}
+          </span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+  <!--fine  TABELLA -->
+
+
+  <div *ngIf="!loading && (!listaOrdini || listaOrdini.length === 0)" 
+       style="padding: 10px; color: #dc3545; border: 1px solid #dc3545; margin-top: 15px;">
+    ⚠️ Nessun ordine trovato o errore nella lettura dei dati.
+  </div>
+</div>
+<!--FINE LISTA ORDINI -->
+
+<!-- LINK ALLA PAGINA PRODOTTI -->
+<div style="text-align: right; width: 100%; margin-top: 100px; padding-bottom: 40px;">
+  <a [routerLink]="['/prodotti']" 
+     class="btn btn-outline-info rounded-pill px-4 shadow-sm" 
+     style="display: inline-block; margin-right: 5%;"> 
+    <i class="bi bi-box-seam me-2"></i> VAI AI PRODOTTI
+  </a>
+</div>
+<!-- FINE LINK ALLA PAGINA PRODOTTI -->
+

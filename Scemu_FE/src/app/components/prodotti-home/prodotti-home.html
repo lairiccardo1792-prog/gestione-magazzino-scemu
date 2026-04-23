@@ -1,0 +1,110 @@
+
+<div style="padding: 20px;">
+  <!-- COLORAZIONE SFONDO -->
+  <div class="blob blob-purple"></div>
+  <div class="blob blob-indigo"></div>
+<!-- INTESTAZIONE -->
+  <div style="margin-bottom: 30px; border-bottom: 2px solid #6f42c1; pb-2">
+    <h1 style="color: #6f42c1; margin: 0; font-size: 2.5rem; letter-spacing: -1px; font-weight: 800;">
+      SCEMU <span style="font-weight: 300; font-size: 1.2rem; color: #6c757d; margin-left: 10px;">TelevideoCom.Co</span>
+    </h1>
+    </div>
+<!-- FINE INTESTAZIONE -->
+
+<!-- TITOLO PRODOTTI -->
+<div style="text-align: center; margin-bottom: 40px; margin-top: 20px;">
+    <h2 style="font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 600; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 5px;">
+      Gestione Prodotti
+    </h2>
+    <div style="width: 50px; height: 3px; background: var(--accent-gradient); margin: 0 auto; border-radius: 10px;"></div>
+<!-- FINE TITOLO PRODOTTI -->
+
+<!-- BOTTONI -->
+
+<div class="actions-bar">
+  <div class="action-item">
+    <span>Cerca un prodotto</span>
+    
+    <button class="btn-plus" routerLink="/cerca-prodotto">
+      <i class="bi bi-search"></i> </button>
+  </div>
+
+  <div class="action-item">
+    <span>Aggiorna prodotto</span>
+    <button class="btn-plus" routerLink="/aggiorna-prodotto">
+      <i class="bi bi-arrow-counterclockwise"></i>
+    </button>
+  </div>
+
+  <div class="action-item">
+    <span>Elimina prodotto</span>
+    <button class="btn-plus" routerLink="/elimina-prodotto">
+      <i class="bi bi-dash"></i>
+    </button>
+  </div>
+</div>
+
+<!--FINE  BOTTONI -->
+
+
+<!-- INIZIO LISTA PRODOTTI -->
+<div style="padding: 20px;">
+  <div class="lista-ordini-container">
+    <i class="bi bi-box-seam"></i>
+    <h2 class="titolo-lista">Magazzino Prodotti</h2>
+  </div>
+
+  <div class="table-container">
+    <div *ngIf="loading" style="color: #00d4ff; text-align: center; padding: 20px;">
+       🔄 Caricamento magazzino...
+    </div>
+
+
+    <!-- INIZIO TABELLA -->
+
+    <table class="cyber-table" *ngIf="!loading && listaProdotti.length > 0">
+      <thead>
+        <tr>
+          <th>Codice</th>
+          <th>Nome</th>
+          <th>Prezzo</th>
+          <th style="text-align: center;">Stock</th>
+        </tr>
+      </thead>
+      <tbody>
+   <tr *ngFor="let p of listaProdotti">
+  <td>#{{ p.id }}</td>
+  <td>{{ p.nome }}</td>
+  <td>{{ p.prezzo | currency:'EUR' }}</td>
+  <td style="text-align: center;">
+    <span class="status-badge" [class.consegnato]="p.stock > 0" [class.annullato]="p.stock <= 0">
+      {{ p.stock > 0 ? p.stock + ' Disponibili' : 'Esaurito' }}
+    </span>
+  </td>
+</tr>
+      </tbody>
+    </table>
+    <!-- CONDIZIONE if PER MESSAGGIO DI ERRORE IN TAL CASO CI SIANO PROBLEMI  -->
+
+     <div *ngIf="!loading && (!listaProdotti || listaProdotti.length === 0)" 
+     style="padding: 10px; color: #dc3545; border: 1px solid #dc3545; margin-top: 15px;">
+  ⚠️ Nessun prodotto trovato o errore nella lettura dei dati.
+</div>
+<!-- FINE CONDIZIONE -->
+
+  </div>
+      <!-- FINE TABELLA -->
+
+
+</div>
+
+<!-- FINE LISTA PRODOTTI -->
+<!-- LINK ALLA PAGINA ORDINI -->
+<div style="text-align: right; width: 100%; margin-top: 100px; padding-bottom: 40px;">
+  <a [routerLink]="['/ordini']" 
+     class="btn btn-outline-info rounded-pill px-4 shadow-sm" 
+     style="display: inline-block; margin-right: 5%;"> 
+    <i class="bi bi-box-seam me-2"></i> TORNA AD ORDINI
+  </a>
+</div>
+<!-- FINE LINK ALLA PAGINA PRODOTTI -->

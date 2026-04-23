@@ -1,0 +1,105 @@
+/* BLOB DI SFONDO */
+.blob {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  filter: blur(80px);
+  opacity: 0.15;
+  z-index: 0;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.blob-purple { background: #6f42c1; top: -100px; left: -100px; }
+.blob-indigo { background: #4b0082; bottom: -100px; right: -100px; }
+
+/* GRID WIDGETS */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.stat-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(111, 66, 193, 0.3);
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  border-radius: 15px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.stat-box:hover {
+  transform: translateY(-5px);
+  background: rgba(111, 66, 193, 0.1);
+  border-color: #6f42c1;
+}
+
+.stat-box .label {
+  display: block;
+  font-size: 0.8rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.stat-box .value {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+/* TABELLA E TITOLI (Riutilizzo i tuoi stili esistenti) */
+.titolo-lista {
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.lista-ordini-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.table-container {
+  background: rgba(13, 17, 23, 0.8);
+  border-radius: 15px;
+  border: 1px solid #30363d;
+  overflow: hidden;
+}
+
+.cyber-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #c9d1d9;
+}
+
+.cyber-table th {
+  background: rgba(111, 66, 193, 0.1);
+  padding: 15px;
+  text-align: left;
+  border-bottom: 2px solid #6f42c1;
+}
+
+.cyber-table td {
+  padding: 15px;
+  border-bottom: 1px solid #30363d;
+}
+
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.consegnato {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ecc71;
+  border: 1px solid #2ecc71;
+}

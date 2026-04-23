@@ -1,0 +1,85 @@
+<div class="landing-wrapper">
+  <div class="blob blob-purple"></div>
+  <div class="blob blob-indigo"></div>
+
+  <div style="width: 100%; position: relative; z-index: 10; padding: 20px 0 0 0;">
+    <div style="margin-bottom: 30px; border-bottom: 2px solid #6f42c1; padding: 0 40px 8px 40px; width: 100%;">
+      <h1 style="color: #6f42c1; margin: 0; font-size: 2.5rem; letter-spacing: -1px; font-weight: 800;">
+        SCEMU <span style="font-weight: 300; font-size: 1.2rem; color: #6c757d; margin-left: 10px;">TelevideoCom.Co</span>
+      </h1>
+    </div>
+  </div>
+
+  <div class="landing-content" style="display: flex; justify-content: center; align-items: center; width: 100%; flex-grow: 1;">
+    <div class="login-card shadow-lg" style="max-width: 480px; width: 100%; margin-top: -100px;">
+      <div class="text-center mb-4">
+        <h1 style="color: white; font-family: 'Syne', sans-serif">Aggiorna Stato</h1>
+        <p style="color: #6c757d">Modifica la fase dell'ordine</p>
+      </div>
+
+      <form [formGroup]="aggiornaForm" (ngSubmit)="onAggiorna()" autocomplete="off">
+        <div class="mb-3">
+          <label style="color: #6c757d; display: block; margin-bottom: 8px">ID Ordine</label>
+          <input
+            type="number"
+            formControlName="idOrdine"
+            min="1"
+            class="form-control"
+            [class.is-invalid]="aggiornaForm.get('idOrdine')?.invalid && aggiornaForm.get('idOrdine')?.touched"
+            placeholder="Es: 1"
+          />
+        </div>
+
+        <div class="mb-4">
+          <label style="color: #6c757d; display: block; margin-bottom: 8px">Nuovo Stato</label>
+          <select formControlName="nuovoStato" class="form-select">
+            <option value="" disabled>Scegli lo stato...</option>
+            @for (stato of listaStati; track stato) {
+              <option [value]="stato">{{ stato.replace('_', ' ').toUpperCase() }}</option>
+            }
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 15px; margin-top: 25px; width: 100%">
+          <button type="submit" [disabled]="loading || aggiornaForm.invalid" class="btn-start" style="flex: 2">
+            <span>{{ loading ? 'INVIO...' : 'AGGIORNA' }}</span>
+            <!-- <i class="bi" [ngClass]="loading ? 'bi-arrow-repeat spin ms-2' : 'bi-send-check ms-2'"></i> -->
+          </button>
+
+          <button type="button" (click)="onReset()" class="btn-reset-blue" style="flex: 1">
+            <span>RESET</span>
+          </button>
+        </div>
+      </form>
+
+      <div style="min-height: 80px; margin-top: 20px;">
+        
+        @if (successo && messaggio) {
+          <div class="text-center p-3 rounded animate-fade-in" 
+               style="background: rgba(46, 204, 113, 0.1); border: 1px solid #2ecc71; color: #2ecc71; font-size: 0.9rem;">
+            <i class="bi bi-check2-all me-2"></i> {{ messaggio }}
+          </div>
+        }
+
+        @if (errore && messaggio) {
+          <div class="text-center p-3 rounded animate-fade-in" 
+               style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #ef4444; font-size: 0.9rem;">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            <strong>Attenzione:</strong> {{ messaggio }}
+          </div>
+        }
+
+        @if (loading) {
+          <div class="text-center mt-2 animate-pulse">
+            <small style="color: #6f42c1; font-weight: bold; letter-spacing: 1px;">ELABORAZIONE IN CORSO...</small>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <a [routerLink]="['/ordini']" class="btn btn-outline-info rounded-pill px-4 shadow-sm"
+     style="position: absolute; bottom: 40px; right: 5%; z-index: 30;">
+    <i class="bi bi-house-door me-2"></i> TORNA ALLA DASHBOARD
+  </a>
+</div>

@@ -1,0 +1,77 @@
+@if (showNavbar) {
+  <nav class="navbar">
+
+    <div class="left">
+      <!-- eventuale logo -->
+    </div>
+
+    <div class="right">
+
+      @if (isLoggedIn) {
+
+        <div class="nav-links">
+
+          <!-- ORDINI -->
+          <div class="dropdown" (click)="toggleDropdown('ordini')">
+            <button class="dropbtn">
+              <i class="bi bi-receipt"></i> Ordini
+              <i class="bi bi-caret-down-fill"></i>
+            </button>
+
+            <div class="dropdown-content" [class.show]="activeDropdown === 'ordini'">
+              <a [routerLink]="['/cerca-ordine']">
+                <i class="bi bi-search"></i> Cerca ordine
+              </a>
+              <a [routerLink]="['/aggiorna-stato-ordine']">
+                <i class="bi bi-arrow-counterclockwise"></i> Aggiorna stato
+              </a>
+              <a [routerLink]="['/crea-ordine']">
+                <i class="bi bi-plus-lg"></i> Nuovo ordine
+              </a>
+              <a [routerLink]="['/ordini']">
+                <i class="bi bi-box-arrow-in-left"></i> Torna ordini
+              </a>
+            </div>
+          </div>
+
+          <!-- PRODOTTI -->
+          <div class="dropdown" (click)="toggleDropdown('prodotti')">
+            <button class="dropbtn">
+              <i class="bi bi-box-seam"></i> Prodotti
+              <i class="bi bi-caret-down-fill"></i>
+            </button>
+
+            <div class="dropdown-content" [class.show]="activeDropdown === 'prodotti'">
+              <a [routerLink]="['/prodotti']">
+                <i class="bi bi-grid"></i> Lista prodotti
+              </a>
+              <a [routerLink]="['/cerca-prodotto']">
+                <i class="bi bi-search"></i> Cerca prodotto
+              </a>
+              <a [routerLink]="['/aggiorna']">
+                <i class="bi bi-arrow-counterclockwise"></i> Aggiorna
+              </a>
+              <a [routerLink]="['/elimina-prodotto']">
+                <i class="bi bi-dash-circle"></i> Elimina
+              </a>
+            </div>
+          </div>
+
+          <!-- STATISTICHE -->
+          <a [routerLink]="['/statistiche']" class="nav-link-simple">
+            <i class="bi bi-bar-chart-line"></i> Statistiche
+          </a>
+
+        </div>
+
+        <!-- USER + LOGOUT -->
+        <span class="username">{{ username }}</span>
+        <button class="btn-primary-custom" (click)="logout()">Logout</button>
+
+      } @else {
+        <button class="btn-primary-custom" (click)="login()">Login</button>
+      }
+
+    </div>
+  </nav>
+}
