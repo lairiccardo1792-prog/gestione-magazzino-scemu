@@ -43,3 +43,20 @@ src/environments/*.local.ts
 # =========================
 .DS_Store
 Thumbs.db
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Mac
+.DS_Store
+
+# Virtual env
+venv/
+.venv/
+
+# Angular
+node_modules/
+dist/
+.angular/
