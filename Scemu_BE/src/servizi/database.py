@@ -1,12 +1,8 @@
 # src/servizi/database.py
 
-from sqlalchemy     import create_engine, inspect, text
-from sqlalchemy.orm import sessionmaker, DeclarativeBase
-from contextlib     import contextmanager
-from typing         import Generator
+import mysql.connector
+from mysql.connector import Error
 
-
-# CONFIGURAZIONE
 DB_CONFIG = {
     "host":     "localhost",
     "port":     3336,
@@ -15,60 +11,35 @@ DB_CONFIG = {
     "database": "ordini_base"
 }
 
-DATABASE_URL = (
-    "mysql+pymysql://{user}:{password}@{host}:{port}/{database}"
-).format(**DB_CONFIG)
-TABELLE_RICHIESTE = {"prodotti", "ordini", "righe_ordini"}
-# *********************************************************************
+TABELLE_RICHIESTE = ["prodotti",
+                     "ordini",
+                     "righe_ordini"]
 
-engine = create_engine(
-    DATABASE_URL,
-    pool_pre_ping=True,
-    pool_size=5,
-    max_overflow=10,
-    echo=True
-)
-
-SessionLocal = sessionmaker(
-    bind=engine,
-    autocommit=False,
-    autoflush=False,
-    expire_on_commit=False
-)
-
-# Base dichiarativa
-class Base(DeclarativeBase):
-    pass
-
-# Context manager
-@contextmanager
-def get_session() -> Generator:
-    session = SessionLocal()
-
+def get_connection():
     try:
-        yield session
-        session.commit()
-    except Exception:
-        session.rollback()
-        raise
-    finally:
-        session.close()    
-
-# Dipendenza FastAPI
-def get_db():        
-    db = SessionLocal()
-
+        conn = mysql.connector.connect(**DB_CONFIG)
+    except Error as e:
+        raise RuntimeError ("Connessione a MariaDB fallita!")    
+    
+    cursore = conn.cursor()
     try:
-        yield db
+        cursore.execute(
+            "SELECT TABLE_NAME FROM information_schema.TABLES "
+            "WHERE TABLE_SCHEMA = %s AND TABLE_NAME IN ({})".format(
+                ", ".join(["%s"] * len(TABELLE_RICHIESTE))
+            ), [DB_CONFIG["database"]] + TABELLE_RICHIESTE 
+        )
+
+        trovate = {row[0] for row in cursore.fetchall()}
+        mancanti = set(TABELLE_RICHIESTE) - trovate
+
+        if mancanti:
+            conn.close()
+            raise RuntimeError(
+                f"Tabelle mancanti nel database '{DB_CONFIG['database']}' "
+                f"{', '.join(sorted(mancanti))}"
+            )
     finally:
-        db.close()    
+        cursore.close()
 
-# Verifica tabelle all'avvio
-def verifica_tabelle() -> None:        
-    inspector = inspect(engine)
-
-    tabelle_presenti = set(inspector.get_table_names())
-    mancanti = TABELLE_RICHIESTE - tabelle_presenti
-
-    if mancanti:
-        raise RuntimeError("Database non coerente")
+    return conn        

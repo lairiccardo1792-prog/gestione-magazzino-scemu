@@ -23,6 +23,7 @@
           <input
             type="number"
             formControlName="idOrdine"
+            min="1"
             class="form-control"
             [class.is-invalid]="aggiornaForm.get('idOrdine')?.invalid && aggiornaForm.get('idOrdine')?.touched"
             placeholder="Es: 1"

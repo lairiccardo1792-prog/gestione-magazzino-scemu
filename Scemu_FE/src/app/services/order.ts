@@ -22,7 +22,7 @@ export class OrderService {
     stato?: StatoOrdine,
     email?: string,
     skip: number = 0,
-    limit: number = 10
+    limit: number = 100
   ): Observable<{ totale: number; ordini: OrdineResponse[] }> {
     let params = new HttpParams()
       .set('skip', skip.toString())

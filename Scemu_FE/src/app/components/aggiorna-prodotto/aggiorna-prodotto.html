@@ -2,57 +2,90 @@
   <div class="blob blob-purple"></div>
   <div class="blob blob-indigo"></div>
 
-  <div style="width: 100%; position: relative; z-index: 50; padding: 20px 0 0 0;">
-    <div style="margin-bottom: 30px; border-bottom: 2px solid #6f42c1; padding: 0 40px 8px 40px; width: 100%;">
-      <h1 style="color: #6f42c1; margin: 0; font-size: 2.5rem; letter-spacing: -1px; font-weight: 800;">
-        SCEMU <span style="font-weight: 300; font-size: 1.2rem; color: #6c757d; margin-left: 10px;">Gestione Magazzino</span>
-      </h1>
-    </div>
+  <!-- HEADER -->
+  <div class="page-header">
+    <h1>
+      SCEMU <span>TelevideoCom.Co</span>
+    </h1>
   </div>
 
+  <!-- CONTENT -->
   <div class="landing-content">
-    <div class="login-card shadow-lg">
+
+    <div class="login-card">
 
       <div class="text-center mb-4">
-        <h2 style="color: white; font-family: 'Syne', sans-serif">Aggiorna Prodotto</h2>
-        <p style="color: #6c757d">Modifica le info del database</p>
+        <h2>Modifica Prodotto</h2>
+        <p>Aggiorna i dati del prodotto selezionato</p>
       </div>
 
       <form [formGroup]="prodottoForm" (ngSubmit)="onSubmit()">
 
+        <!-- PRODOTTO -->
         <div class="mb-3">
           <label class="form-label-custom">ID e Nome Prodotto</label>
-          <div class="select-wrapper">
-            <select formControlName="id" class="form-control" (change)="onProdottoChange($event)">
-              <option value="" disabled selected>Seleziona prodotto:</option>
-              <option *ngFor="let p of prodotti" [value]="p.id">
-                {{ p.id }} - {{ p.nome }}
-              </option>
-            </select>
-          </div>
+
+          <select formControlName="id" class="form-control" (change)="onProdottoChange($event)">
+            <option value="" disabled selected>Seleziona prodotto:</option>
+            <option *ngFor="let p of prodotti" [value]="p.id">
+              {{ p.id }} - {{ p.nome }}
+            </option>
+          </select>
+
+          <small class="error-placeholder">
+            <ng-container *ngIf="prodottoForm.get('id')?.touched && prodottoForm.get('id')?.invalid">
+              {{ getErrorMessage('id') }}
+            </ng-container>
+          </small>
         </div>
 
+        <!-- PREZZO + STOCK -->
         <div class="row">
           <div class="col-md-6 mb-3">
             <label class="form-label-custom">Prezzo (€)</label>
-            <input type="number" formControlName="prezzo" class="form-control">
+            <input type="number" formControlName="prezzo" class="form-control" min="0.01">
+
+            <small class="error-placeholder">
+              <ng-container *ngIf="prodottoForm.get('prezzo')?.touched && prodottoForm.get('prezzo')?.invalid">
+                {{ getErrorMessage('prezzo') }}
+              </ng-container>
+            </small>
           </div>
+
           <div class="col-md-6 mb-3">
             <label class="form-label-custom">Stock</label>
-            <input type="number" formControlName="stock" class="form-control">
+            <input type="number" formControlName="stock" class="form-control" min="1">
+
+            <small class="error-placeholder">
+              <ng-container *ngIf="prodottoForm.get('stock')?.touched && prodottoForm.get('stock')?.invalid">
+                {{ getErrorMessage('stock') }}
+              </ng-container>
+            </small>
           </div>
         </div>
 
+        <!-- CATEGORIA -->
         <div class="mb-4">
           <label class="form-label-custom">Categoria</label>
+
           <select formControlName="categoria" class="form-control" (change)="onCategoriaChange($event)">
-              <option value="" disabled selected>Seleziona categoria:</option>
-              <option *ngFor="let cat of categorie" [value]="cat">
-                {{cat}}
-              </option>
-            </select>
+            <option value="" disabled selected>Seleziona categoria:</option>
+            <option *ngFor="let cat of categorie" [value]="cat">{{ cat }}</option>
+          </select>
+
+          <small class="error-placeholder">
+            <ng-container *ngIf="prodottoForm.get('categoria')?.touched && prodottoForm.get('categoria')?.invalid">
+              {{ getErrorMessage('categoria') }}
+            </ng-container>
+          </small>
         </div>
 
+        <!-- ERRORE GENERALE -->
+        <div *ngIf="erroreMessaggio" class="alert-error">
+          {{ erroreMessaggio }}
+        </div>
+
+        <!-- BOTTONI -->
         <button type="submit" [disabled]="prodottoForm.invalid" class="btn-save">
           SALVA MODIFICHE
         </button>
@@ -65,9 +98,4 @@
 
     </div>
   </div>
-  <a [routerLink]="['/prodotti']" 
-     class="btn btn-outline-info rounded-pill px-4 shadow-sm"
-     style="position: absolute; bottom: 40px; right: 5%; z-index: 9999">
-     <i class="bi bi-house-door me-2"></i> TORNA ALLA DASHBOARD
-  </a>
 </div>

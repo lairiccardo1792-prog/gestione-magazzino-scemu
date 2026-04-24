@@ -1,34 +1,79 @@
-from fastapi import APIRouter, HTTPException, status, Depends
-from sqlalchemy.orm import Session
-from src.modelli import utenti as md
-from src.crud import crud_login as cr
-from src.servizi.database import get_db
-from src.servizi.token import crea_token_accesso  # <--- IMPORTA LA NUOVA FUNZIONE
+# src/routes/routes_login.py
 
-# Rimuoviamo time e base64 perché non ci servono più per il token
-router = APIRouter (
-    prefix = "/login",
-    tags= ["Autenticazione"]
+from fastapi import APIRouter, HTTPException, status
+from datetime import datetime, timedelta
+import jwt
+from src import modelli as md
+from src import crud as cr
+
+# Configurazione JWT
+JWT_SECRET_KEY = "scemu-secret-key-2026"  # ⚠️ In produzione: usare variabile d'ambiente
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRATION_HOURS = 24
+
+router = APIRouter(
+    tags=["Autenticazione"]
 )
 
-@router.post("/", response_model=md.LoginResponse)
-def login(dati : md.LoginRequest, db : Session = Depends(get_db)):
-    # 1. La tua logica CRUD resta identica
-    user_db = cr.verifica_passw(db, dati.user, dati.password)
-
-    if not user_db: 
-        return md.LoginResponse(success=False, message="Credenziali errate")
-
-    # 2. SOSTITUIAMO la vecchia tokenizzazione Base64 con lo JWT professionale
-    # Passiamo l'ID dell'utente che arriva dal tuo database (user_db.id)
-    token_sicuro = crea_token_accesso(user_db.id)
-
-    # 3. La risposta resta la stessa, cambia solo il "contenuto" del campo token
+@router.post("/login", response_model=md.LoginResponse)
+def login(credentials: md.LoginRequest):
+    """
+    Endpoint di login che autentica l'utente e ritorna un JWT token
+    
+    Args:
+        credentials: LoginRequest con user e password
+        
+    Returns:
+        LoginResponse con success, message, username, token
+    """
+    
+    # 1. Validazione input
+    if not credentials.user or not credentials.password:
+        return md.LoginResponse(
+            success=False,
+            message="Username e password non possono essere vuoti",
+            username=None,
+            token=None
+        )
+    
+    # 2. Verifica credenziali nel database
+    if not cr.verify_password(credentials.user, credentials.password):
+        return md.LoginResponse(
+            success=False,
+            message="Credenziali non valide",
+            username=None,
+            token=None
+        )
+    
+    # 3. Recupera dati utente
+    utente = cr.get_utente_by_username(credentials.user)
+    if not utente:
+        return md.LoginResponse(
+            success=False,
+            message="Utente non trovato",
+            username=None,
+            token=None
+        )
+    
+    # 4. Genera JWT token
+    payload = {
+        "sub": utente["user"],  # subject = username
+        "id": utente["id"],      # id utente
+        "exp": datetime.utcnow() + timedelta(hours=JWT_EXPIRATION_HOURS)  # Scadenza
+    }
+    
+    try:
+        token = jwt.encode(payload, JWT_SECRET_KEY, algorithm=JWT_ALGORITHM)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Errore nella generazione del token: {str(e)}"
+        )
+    
+    # 5. Ritorna risposta di successo
     return md.LoginResponse(
         success=True,
-        message=f"Benvenuto {user_db.user}!",
-        username=user_db.user,
-        token=token_sicuro # <--- Ora questo è un vero JWT blindato
+        message="Accesso effettuato",
+        username=utente["user"],
+        token=token
     )
-
-

@@ -77,3 +77,12 @@
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Spazio riservato per messaggi di errore */
+.error-placeholder {
+  display: block;
+  min-height: 1.2em;  /* regola secondo l'altezza del font */
+  font-size: 0.8rem;
+  color: #dc3545;
+  margin-top: 2px;
+}
