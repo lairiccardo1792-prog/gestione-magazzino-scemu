@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './crea-ordine.html',
-  styleUrl: './crea-ordine.css'
+  styleUrl: './crea-ordine.css',
 })
 export class CreaOrdineComponent implements OnInit {
   ordineForm!: FormGroup;
@@ -19,15 +19,15 @@ export class CreaOrdineComponent implements OnInit {
   messaggio = '';
 
   constructor(
-    private fb: FormBuilder, 
+    private fb: FormBuilder,
     private orderService: OrderService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     this.initForm();
   }
 
   ngOnInit(): void {
-    console.log("Componente caricato e Form pronto!");
+    console.log('Componente caricato e Form pronto!');
   }
 
   initForm() {
@@ -35,14 +35,25 @@ export class CreaOrdineComponent implements OnInit {
       cliente_nome: ['', [Validators.required, Validators.minLength(3)]],
       cliente_email: ['', [Validators.required, Validators.email]],
       note: [''],
-      righe: this.fb.array([this.creaRiga()])
+      righe: this.fb.array([this.creaRiga()]),
     });
   }
+  getErrorMessage(controlName: string, index?: number) {
+    const control = index !== undefined
+      ? (this.righe.at(index).get(controlName)!)
+      : this.ordineForm.get(controlName)!;
 
+    if (control.errors?.['required']) return 'Campo obbligatorio';
+    if (control.errors?.['minlength']) return `Minimo ${control.errors['minlength'].requiredLength} caratteri`;
+    if (control.errors?.['min']) return `Valore minimo ${control.errors['min'].min}`;
+    if (control.errors?.['max']) return `Valore massimo ${control.errors['max'].max}`;
+    if (control.errors?.['email']) return 'Email non valida';
+    return '';
+  }
   creaRiga(): FormGroup {
     return this.fb.group({
       prodotto_id: [null, [Validators.required, Validators.min(1)]],
-      quantita: [1, [Validators.required, Validators.min(1)]]
+      quantita: [1, [Validators.required, Validators.min(1), Validators.max(9999)]],
     });
   }
 
@@ -73,7 +84,7 @@ export class CreaOrdineComponent implements OnInit {
   onSubmit() {
     if (this.ordineForm.invalid) return;
     this.loading = true;
-    
+
     this.orderService.creaOrdine(this.ordineForm.value).subscribe({
       next: (res) => {
         this.loading = false;
@@ -86,9 +97,22 @@ export class CreaOrdineComponent implements OnInit {
       error: (err) => {
         this.loading = false;
         this.errore = true;
-        this.messaggio = err.error?.detail || "Errore durante la creazione dell'ordine";
+
+        console.error('Dettaglio tecnico errore:', err);
+
+        // LOGICA PER ESTRARRE IL TESTO
+        if (err.error && typeof err.error.message === 'string') {
+          this.messaggio = err.error.message;
+        } else if (err.error && typeof err.error.detail === 'string') {
+          this.messaggio = err.error.detail;
+        } else if (typeof err.error === 'string') {
+          this.messaggio = err.error;
+        } else {
+          this.messaggio = 'Errore: quantità non disponibile o dati non validi.';
+        }
+
         this.cdr.detectChanges();
-      }
+      },
     });
   }
 }

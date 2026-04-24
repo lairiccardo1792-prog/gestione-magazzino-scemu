@@ -1,20 +1,21 @@
-
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+/* src/styles.css */
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
 
 :root {
   /* Sfondi */
   --bg-dark: #09090f;
   --bg-card: rgba(255, 255, 255, 0.03);
-  
+
   /* Colori Identità */
   --primary-indigo: #6366f1;
   --primary-purple: #8b5cf6;
   --accent-gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
-  
+
   /* Testi */
   --text-main: #f0f0ff;
   --text-muted: #6b6b85;
-  
+
   /* Effetti */
   --glass-border: 1px solid rgba(255, 255, 255, 0.08);
   --blur-effect: blur(16px);
@@ -46,7 +47,7 @@ h1, h2, h3, .app-logo {
   display: flex;
   justify-content: center;
   padding: 0 20px;
-  
+
 }
 
 .cyber-table {
@@ -87,10 +88,10 @@ h1, h2, h3, .app-logo {
 .status-badge.annullato { color: #e74c3c; }   /* ROSSO */
 
 /* Tutti gli altri stati (spedito, confermato, in_attesa) diventano gialli/arancio */
-.status-badge.spedito, 
-.status-badge.confermato, 
-.status-badge.in_attesa { 
-  color: #f1c40f; 
+.status-badge.spedito,
+.status-badge.confermato,
+.status-badge.in_attesa {
+  color: #f1c40f;
 }
 
 /* Effetto riga */
@@ -158,19 +159,19 @@ h1, h2, h3, .app-logo {
 
 .lista-ordini-container i {
   /* DIMENSIONE: 1.5rem è la misura perfetta per stare bene con il titolo */
-  font-size: 1.5rem; 
+  font-size: 1.5rem;
   color: #00d4ff;
-  
+
   /* BAGLIORE: più delicato, così non "esplode" visivamente */
-  filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.3)); 
-  
+  filter: drop-shadow(0 0 4px rgba(0, 212, 255, 0.3));
+
   display: inline-flex;
   align-items: center;
 }
 
 .titolo-lista {
   /* Testo leggermente più piccolo e meno pesante */
-  font-size: 1.4rem; 
+  font-size: 1.4rem;
   font-weight: 700;
   color: #ffffff;
   letter-spacing: 1px;
